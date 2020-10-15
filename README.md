@@ -1,2 +1,5 @@
 # NativeWifiAPI
-Use windows wlanapi to connect wifi.Use Qt GUI to show wifi.
+Use windows wlanapi to connect wifi.
+Use Qt GUI to show wifi.
+
+NativeWifiConnect Has been packaged into a dynamic library，The source file is in：..\3rdparty\NativeWifiConnect\x64\vc14\include\src

@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/WLAN0.png</file>
+        <file>icon/WLAN1.png</file>
+        <file>icon/WLAN2.png</file>
+        <file>icon/WLAN3.png</file>
+        <file>icon/WLAN4.png</file>
+        <file>icon/wifiOFF.png</file>
+        <file>icon/wifiOn.png</file>
+        <file>icon/password_hide.png</file>
+        <file>icon/password_show.png</file>
+    </qresource>
+</RCC>

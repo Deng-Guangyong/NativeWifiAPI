@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
-    <height>535</height>
+    <width>461</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>0</x>
      <y>70</y>
      <width>461</width>
-     <height>421</height>
+     <height>431</height>
     </rect>
    </property>
    <property name="columnCount">
@@ -40,11 +40,15 @@
   <widget class="QPushButton" name="btnRefreshWIFI">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>17</y>
+     <x>170</x>
+     <y>20</y>
      <width>93</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}
+QPushButton{ color: rgb(255,255,255); font: 10pt &quot;华光大黑_CNKI&quot;;background-color:  rgb(161, 80, 0); border:3px black;border-radius:10px;border-style: outset;}</string>
    </property>
    <property name="text">
     <string>刷新网络</string>
@@ -53,7 +57,7 @@
   <widget class="QToolButton" name="btnWlanOpenControl">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>30</x>
      <y>0</y>
      <width>71</width>
      <height>60</height>
@@ -89,14 +93,29 @@ QToolButton::menu-indicator{image:none;}</string>
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>510</y>
+     <y>498</y>
      <width>461</width>
-     <height>19</height>
+     <height>31</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QLabel" name="label_3">
+      <property name="minimumSize">
+       <size>
+        <width>160</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>160</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 10pt &quot;Agency FB&quot;;</string>
+      </property>
       <property name="text">
        <string>当前连接:</string>
       </property>
@@ -104,12 +123,33 @@ QToolButton::menu-indicator{image:none;}</string>
     </item>
     <item>
      <widget class="QLabel" name="ActiveWifiName_Lab">
+      <property name="styleSheet">
+       <string notr="true">font: 13pt &quot;Agency FB&quot;;
+color: rgb(161, 80, 0);</string>
+      </property>
       <property name="text">
        <string/>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="btnClose">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>20</y>
+     <width>93</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:pressed{background-color:rgb(204, 228, 247);border-style: inset;}
+QPushButton{ color: rgb(255,255,255); font: 10pt &quot;华光大黑_CNKI&quot;;background-color:  rgb(161, 80, 0); border:3px black;border-radius:10px;border-style: outset;}</string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

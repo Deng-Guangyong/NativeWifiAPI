@@ -11,15 +11,15 @@
 
 class MainWindow : public QDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = Q_NULLPTR);
-	~MainWindow();	
+	MainWindow(QWidget *parent = Q_NULLPTR);
+	~MainWindow();
 
-
-public slots:
+	public slots:
 	void on_btnRefreshWIFI_clicked();
+	void on_btnClose_clicked();
 	void slot_btnWlanOpenControl(bool checked);
 	void slot_btnConnectControl_clicked();
 	void slot_itemClicked(QTreeWidgetItem *item, int column);
@@ -27,18 +27,18 @@ public slots:
 private:
 	bool show_WLAN();
 	void initWifiIcon();
-	void createConnectWidget(QGroupBox* connectGroupB,bool isConnect);
+	void createConnectWidget(QGroupBox* connectGroupB, bool isConnect);
 	void createPasswordWidget(QGroupBox* passwordGroupB);
 	void removeConnectItem();
 
-    Ui::MainWindowClass ui;		
-	NativeWifiConnect mNativeWifi;
-	QTimer* mRefresh_timer = nullptr;
-	std::map<std::string, int> mWifiMap;
-	std::string mCurrentConnectedWifi="";
-	QString mSelectWifiName = "";
-	QStringList mWlan_slant_icon_files;
-	QPushButton* btnConnectControl = NULL;
-	QLabel* wifiState_Lab = NULL;
-	QLineEditPassword* passwordLineEdit = NULL;
+	Ui::MainWindowClass				ui;
+	NativeWifiConnect				mNativeWifi;
+	QTimer*						    mRefresh_timer = nullptr;
+	std::map<std::string, int>		mWifiMap;
+	std::string						mCurrentConnectedWifi = "";
+	QString							mSelectWifiName = "";
+	QStringList						mWlan_slant_icon_files;
+	QPushButton*					btnConnectControl = NULL;
+	QLabel*							wifiState_Lab = NULL;
+	QLineEditPassword*				passwordLineEdit = NULL;
 };

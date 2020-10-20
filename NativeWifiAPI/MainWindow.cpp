@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <string>
+#include <thread>
 #include <iostream>
 #include <sstream>
 
@@ -11,9 +12,10 @@
 #define print_error(str) std::cout<<"[ERROR] "<<str<<std::endl 
 
 MainWindow::MainWindow(QWidget *parent)
-    : QDialog(parent)
+	: QDialog(parent)
 {
-    ui.setupUi(this);
+	ui.setupUi(this);
+	setFixedSize(QSize(461, 529));
 	initWifiIcon();
 	ui.wifi_treeWidget->setRootIsDecorated(false);
 	mRefresh_timer = new QTimer(this);
@@ -42,7 +44,7 @@ void MainWindow::slot_itemClicked(QTreeWidgetItem *item, int column)
 {
 	Q_UNUSED(column);
 	if (!item)
-		return;			
+		return;
 	if (!item->data(0, Qt::DisplayRole).isNull() && item->childCount() == 0)
 	{
 		mSelectWifiName = item->data(0, Qt::DisplayRole).toString();
@@ -50,10 +52,9 @@ void MainWindow::slot_itemClicked(QTreeWidgetItem *item, int column)
 		QTreeWidgetItem* connectControlItem = new QTreeWidgetItem(item);
 		QGroupBox* connectGrpB = new QGroupBox(this);
 		bool isconnected = mSelectWifiName == QString::fromStdString(mCurrentConnectedWifi);
-		//print_info("selected: " + mSelectWifiName.toStdString());
 		qDebug() << "selected: " << mSelectWifiName;
 		createConnectWidget(connectGrpB, isconnected);
-		ui.wifi_treeWidget->setItemWidget(connectControlItem, 0, connectGrpB);	
+		ui.wifi_treeWidget->setItemWidget(connectControlItem, 0, connectGrpB);
 	}
 	ui.wifi_treeWidget->expandAll();
 }
@@ -61,9 +62,16 @@ void MainWindow::slot_itemClicked(QTreeWidgetItem *item, int column)
 void MainWindow::on_btnRefreshWIFI_clicked()
 {
 	removeConnectItem();
-	ui.wifi_treeWidget->clear();		
-	mNativeWifi.refreshWLAN(mWifiMap);	
+	ui.wifi_treeWidget->clear();
+	mNativeWifi.refreshWLAN(mWifiMap);
 	show_WLAN();
+}
+
+void MainWindow::on_btnClose_clicked()
+{
+	mRefresh_timer->stop();
+	repaint();
+	close();
 }
 
 bool MainWindow::show_WLAN()
@@ -80,39 +88,31 @@ bool MainWindow::show_WLAN()
 		ui.ActiveWifiName_Lab->setText(QString::fromStdString(mCurrentConnectedWifi));
 	}
 	int signalQuality = 0;
-	int signalLevel = 0;		
+	int signalLevel = 0;
 	std::map<std::string, int>::iterator iter;
 	for (iter = mWifiMap.begin(); iter != mWifiMap.end(); iter++)
-	{		
-		QTreeWidgetItem* item = new QTreeWidgetItem(ui.wifi_treeWidget);			
+	{
+		QTreeWidgetItem* item = new QTreeWidgetItem(ui.wifi_treeWidget);
 		item->setData(0, Qt::DisplayRole, QString::fromStdString(iter->first));
-		QFont font = item->font(1);				
+		QFont font = item->font(1);
 		if (mCurrentConnectedWifi == iter->first)
 		{
 			font.setBold(true);
 			ui.wifi_treeWidget->setCurrentItem(item);
-		}		
-		item->setFont(0,font);		
+		}
+		item->setFont(0, font);
 		signalQuality = iter->second;
-		if (signalQuality >= 80)
+		if (signalQuality == 0)
+		{
+			signalLevel = 0;
+		}
+		else if (signalQuality == 100)
 		{
 			signalLevel = 4;
 		}
-		else if (signalQuality >= 55 && signalQuality < 80)
-		{
-			signalLevel = 3;
-		}
-		else if (signalQuality >= 30 && signalQuality < 55)
-		{
-			signalLevel = 2;
-		}
-		else if (signalQuality >= 5 && signalQuality < 30)
-		{
-			signalLevel = 1;
-		}
 		else
 		{
-			signalLevel = 0;
+			signalLevel = signalQuality / 25 + 1;
 		}
 		QIcon wlanIcon;
 		wlanIcon.addFile(mWlan_slant_icon_files[signalLevel]);
@@ -130,13 +130,13 @@ void MainWindow::slot_btnWlanOpenControl(bool checked)
 		{
 			print_error("failed to open WLAN");
 			return;
-		}	
+		}
 		print_info("open WLAN success");
 		if (!show_WLAN())
 			return;
 		ui.btnWlanOpenControl->setText("WLAN ON");
 		ui.btnWlanOpenControl->setIcon(QIcon(":/icon/wifiOn.png"));
-		//mRefresh_timer->start(5000);		
+		mRefresh_timer->start(60000);
 	}
 	else
 	{
@@ -145,21 +145,22 @@ void MainWindow::slot_btnWlanOpenControl(bool checked)
 		ui.wifi_treeWidget->clear();
 		ui.btnWlanOpenControl->setText("WLAN OFF");
 		ui.btnWlanOpenControl->setIcon(QIcon(":/icon/wifiOFF.png"));
-		//mRefresh_timer->stop();
+		mRefresh_timer->stop();
 		print_info("close WLAN success");
-		show_WLAN();
+		ui.ActiveWifiName_Lab->clear();
 	}
 }
 
 void MainWindow::slot_btnConnectControl_clicked()
 {
 	if (btnConnectControl->text() == QString::fromLocal8Bit("连接"))
-	{	
+	{
 		if (mNativeWifi.connectWLAN(mSelectWifiName.toStdString()))
 		{
 			print_info("connect WLAN success");
 			wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
-			btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));	
+			btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
+			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 			on_btnRefreshWIFI_clicked();
 		}
 		else
@@ -173,17 +174,19 @@ void MainWindow::slot_btnConnectControl_clicked()
 			QTreeWidgetItem* passwordItem = new QTreeWidgetItem(currentItem);
 			QGroupBox* passwordGroupB = new QGroupBox(this);
 			createPasswordWidget(passwordGroupB);
-			ui.wifi_treeWidget->setItemWidget(passwordItem, 0, passwordGroupB);			
-			btnConnectControl->setText(QString::fromLocal8Bit("密码连接"));			
-		}				
+			ui.wifi_treeWidget->setItemWidget(passwordItem, 0, passwordGroupB);
+			btnConnectControl->setText(QString::fromLocal8Bit("密码连接"));
+		}
 	}
-	else if(btnConnectControl->text() == QString::fromLocal8Bit("断开连接"))
+	else if (btnConnectControl->text() == QString::fromLocal8Bit("断开连接"))
 	{
 		if (mNativeWifi.disConnect())
 		{
 			print_info("disconnect WLAN success");
 			wifiState_Lab->setText(QString::fromLocal8Bit("安全"));
-			btnConnectControl->setText(QString::fromLocal8Bit("连接"));		
+			btnConnectControl->setText(QString::fromLocal8Bit("连接"));
+			std::this_thread::sleep_for(std::chrono::milliseconds(300));
+			on_btnRefreshWIFI_clicked();
 		}
 		else
 		{
@@ -197,6 +200,7 @@ void MainWindow::slot_btnConnectControl_clicked()
 			print_info("connect WLAN success");
 			wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
 			btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
+			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 			on_btnRefreshWIFI_clicked();
 		}
 		else
@@ -224,13 +228,13 @@ void MainWindow::createConnectWidget(QGroupBox* connectGroupB, bool isConnect)
 	btnConnectControl = new QPushButton(connectGroupB);
 	btnConnectControl->setCheckable(true);
 	btnConnectControl->setChecked(false);
-	btnConnectControl->setFixedSize(QSize(93, 25));	
+	btnConnectControl->setFixedSize(QSize(93, 25));
 	connect(btnConnectControl, SIGNAL(clicked()), this, SLOT(slot_btnConnectControl_clicked()));
 	wifiState_Lab = new QLabel(connectGroupB);
 	wifiState_Lab->setFixedHeight(25);
 	wifiState_Lab->setAlignment(Qt::AlignLeft);
 	if (isConnect)
-	{		
+	{
 		wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
 		btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
 	}
@@ -241,8 +245,8 @@ void MainWindow::createConnectWidget(QGroupBox* connectGroupB, bool isConnect)
 	}
 	QHBoxLayout* horizontalLayout = new QHBoxLayout();
 	horizontalLayout->setSpacing(6);
-	horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));	
-	horizontalLayout->addWidget(wifiState_Lab);	
+	horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+	horizontalLayout->addWidget(wifiState_Lab);
 	horizontalLayout->addWidget(btnConnectControl);
 	verticalLayout->addLayout(horizontalLayout);
 }
@@ -307,7 +311,7 @@ void MainWindow::createPasswordWidget(QGroupBox* passwordGroupB)
 		"}\n"
 		" \n"
 		" \n"
-		" "));	
+		" "));
 	passwordLineEdit->setObjectName(QStringLiteral("passwordLineEdit"));
 	horizontalLayout->addWidget(passwordLineEdit);
 	verticalLayout->addLayout(horizontalLayout);
@@ -333,5 +337,5 @@ void MainWindow::removeConnectItem()
 
 void MainWindow::slot_refresh_timeout()
 {
-	//on_btnRefreshWIFI_clicked();
+	on_btnRefreshWIFI_clicked();
 }

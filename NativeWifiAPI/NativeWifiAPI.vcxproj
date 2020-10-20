@@ -41,7 +41,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>..\3rdparty\NativeWifiConnect\x64\vc14\include;..\3rdparty\NativeWifiConnect\x64\vc14\include\src;$(IncludePath)</IncludePath>
+    <IncludePath>..\3rdparty\NativeWifiConnect\include;..\3rdparty\NativeWifiConnect\include\src;$(IncludePath)</IncludePath>
     <LibraryPath>..\3rdparty\NativeWifiConnect\x64\vc14\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">

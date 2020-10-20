@@ -6,7 +6,7 @@ QLineEdit {
     border: 1px solid #e5e5e5;
     border-radius: 4px;
     padding: 2px 2px;
-    min-height: 18px;   /* 对应高度大概是24px，这里不知为何不能等价 */
+    min-height: 18px;   
     padding-right: 18px;
 }
  

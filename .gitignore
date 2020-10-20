@@ -14,8 +14,7 @@
 
 # Compiled Dynamic libraries
 *.so
-!3rdparty/**/*.dll
-!3rdparty/NativeWifiConnect/x64/vc14/bin/*.dll
+#!3rdparty/**/*.dll
 *.so.*
 
 # Fortran module files

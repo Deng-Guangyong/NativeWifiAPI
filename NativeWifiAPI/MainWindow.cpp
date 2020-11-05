@@ -8,6 +8,13 @@
 #include <iostream>
 #include <sstream>
 
+//清理指针所指向的内容，并置0
+#define Delete_And_Null(any_pointer)\
+		if(any_pointer){			\
+			delete any_pointer;		\
+			any_pointer = 0;		\
+		};
+
 #define print_info(str) std::cout<<"[INFO] "<<str<<std::endl 
 #define print_error(str) std::cout<<"[ERROR] "<<str<<std::endl 
 
@@ -28,6 +35,20 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::closeEvent(QCloseEvent * event)
+{
+	myclose();
+	QDialog::closeEvent(event);
+}
+
+void MainWindow::myclose()
+{
+	Delete_And_Null(mRefresh_timer);
+	Delete_And_Null(btnConnectControl);
+	Delete_And_Null(wifiState_Lab);
+	Delete_And_Null(passwordLineEdit);
 }
 
 void MainWindow::initWifiIcon()
@@ -90,7 +111,7 @@ bool MainWindow::show_WLAN()
 	int signalQuality = 0;
 	int signalLevel = 0;
 	std::map<std::string, int>::iterator iter;
-	for (iter = mWifiMap.begin(); iter != mWifiMap.end(); iter++)
+	for (iter = mWifiMap.begin(); iter != mWifiMap.end(); ++iter)
 	{
 		QTreeWidgetItem* item = new QTreeWidgetItem(ui.wifi_treeWidget);
 		item->setData(0, Qt::DisplayRole, QString::fromStdString(iter->first));

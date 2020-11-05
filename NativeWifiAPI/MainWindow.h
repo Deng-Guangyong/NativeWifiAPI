@@ -17,14 +17,17 @@ public:
 	MainWindow(QWidget *parent = Q_NULLPTR);
 	~MainWindow();
 
-	public slots:
+public slots:
 	void on_btnRefreshWIFI_clicked();
 	void on_btnClose_clicked();
 	void slot_btnWlanOpenControl(bool checked);
 	void slot_btnConnectControl_clicked();
 	void slot_itemClicked(QTreeWidgetItem *item, int column);
 	void slot_refresh_timeout();
+protected:
+	void closeEvent(QCloseEvent *event);
 private:
+	void myclose();
 	bool show_WLAN();
 	void initWifiIcon();
 	void createConnectWidget(QGroupBox* connectGroupB, bool isConnect);

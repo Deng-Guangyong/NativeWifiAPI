@@ -36,7 +36,7 @@ private:
 
 	Ui::MainWindowClass				ui;
 	NativeWifiConnect				mNativeWifi;
-	QTimer*						    mRefresh_timer = nullptr;
+	QTimer						    mRefresh_timer;
 	std::map<std::string, int>		mWifiMap;
 	std::string						mCurrentConnectedWifi = "";
 	QString							mSelectWifiName = "";

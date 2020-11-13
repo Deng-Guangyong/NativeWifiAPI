@@ -25,8 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 	setFixedSize(QSize(461, 529));
 	initWifiIcon();
 	ui.wifi_treeWidget->setRootIsDecorated(false);
-	mRefresh_timer = new QTimer(this);
-	connect(mRefresh_timer, &QTimer::timeout, this, &MainWindow::slot_refresh_timeout);
+	connect(&mRefresh_timer, SIGNAL(timeout()), this, SLOT(slot_refresh_timeout()));
 	connect(ui.wifi_treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
 		this, SLOT(slot_itemClicked(QTreeWidgetItem *, int)));
 	connect(ui.btnWlanOpenControl, SIGNAL(toggled(bool)), this, SLOT(slot_btnWlanOpenControl(bool)));
@@ -45,7 +44,6 @@ void MainWindow::closeEvent(QCloseEvent * event)
 
 void MainWindow::myclose()
 {
-	Delete_And_Null(mRefresh_timer);
 	Delete_And_Null(btnConnectControl);
 	Delete_And_Null(wifiState_Lab);
 	Delete_And_Null(passwordLineEdit);
@@ -90,7 +88,7 @@ void MainWindow::on_btnRefreshWIFI_clicked()
 
 void MainWindow::on_btnClose_clicked()
 {
-	mRefresh_timer->stop();
+	mRefresh_timer.stop();
 	repaint();
 	close();
 }
@@ -157,7 +155,7 @@ void MainWindow::slot_btnWlanOpenControl(bool checked)
 			return;
 		ui.btnWlanOpenControl->setText("WLAN ON");
 		ui.btnWlanOpenControl->setIcon(QIcon(":/icon/wifiOn.png"));
-		mRefresh_timer->start(60000);
+		mRefresh_timer.start(60000);
 	}
 	else
 	{
@@ -166,7 +164,7 @@ void MainWindow::slot_btnWlanOpenControl(bool checked)
 		ui.wifi_treeWidget->clear();
 		ui.btnWlanOpenControl->setText("WLAN OFF");
 		ui.btnWlanOpenControl->setIcon(QIcon(":/icon/wifiOFF.png"));
-		mRefresh_timer->stop();
+		mRefresh_timer.stop();
 		print_info("close WLAN success");
 		ui.ActiveWifiName_Lab->clear();
 	}

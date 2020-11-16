@@ -44,9 +44,9 @@ void MainWindow::closeEvent(QCloseEvent * event)
 
 void MainWindow::myclose()
 {
-	Delete_And_Null(btnConnectControl);
-	Delete_And_Null(wifiState_Lab);
-	Delete_And_Null(passwordLineEdit);
+	Delete_And_Null(p_btnConnectControl);
+	Delete_And_Null(p_wifiState_Lab);
+	Delete_And_Null(p_passwordLineEdit);
 }
 
 void MainWindow::initWifiIcon()
@@ -97,7 +97,7 @@ bool MainWindow::show_WLAN()
 {
 	if (mWifiMap.empty())
 		return false;
-	int quality;
+	int quality=0;
 	if (mNativeWifi.queryInterface(mCurrentConnectedWifi, quality))
 	{
 		std::stringstream ss;
@@ -172,13 +172,13 @@ void MainWindow::slot_btnWlanOpenControl(bool checked)
 
 void MainWindow::slot_btnConnectControl_clicked()
 {
-	if (btnConnectControl->text() == QString::fromLocal8Bit("连接"))
+	if (p_btnConnectControl->text() == QString::fromLocal8Bit("连接"))
 	{
 		if (mNativeWifi.connectWLAN(mSelectWifiName.toStdString()))
 		{
 			print_info("connect WLAN success");
-			wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
-			btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
+			p_wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
+			p_btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 			on_btnRefreshWIFI_clicked();
 		}
@@ -194,16 +194,16 @@ void MainWindow::slot_btnConnectControl_clicked()
 			QGroupBox* passwordGroupB = new QGroupBox(this);
 			createPasswordWidget(passwordGroupB);
 			ui.wifi_treeWidget->setItemWidget(passwordItem, 0, passwordGroupB);
-			btnConnectControl->setText(QString::fromLocal8Bit("密码连接"));
+			p_btnConnectControl->setText(QString::fromLocal8Bit("密码连接"));
 		}
 	}
-	else if (btnConnectControl->text() == QString::fromLocal8Bit("断开连接"))
+	else if (p_btnConnectControl->text() == QString::fromLocal8Bit("断开连接"))
 	{
 		if (mNativeWifi.disConnect())
 		{
 			print_info("disconnect WLAN success");
-			wifiState_Lab->setText(QString::fromLocal8Bit("安全"));
-			btnConnectControl->setText(QString::fromLocal8Bit("连接"));
+			p_wifiState_Lab->setText(QString::fromLocal8Bit("安全"));
+			p_btnConnectControl->setText(QString::fromLocal8Bit("连接"));
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 			on_btnRefreshWIFI_clicked();
 		}
@@ -212,13 +212,13 @@ void MainWindow::slot_btnConnectControl_clicked()
 			print_error("failed to disconnect wlan");
 		}
 	}
-	else if (btnConnectControl->text() == QString::fromLocal8Bit("密码连接"))
+	else if (p_btnConnectControl->text() == QString::fromLocal8Bit("密码连接"))
 	{
-		if (mNativeWifi.passwordToConnectWLAN(mSelectWifiName.toStdString(), passwordLineEdit->text().toStdString()))
+		if (mNativeWifi.passwordToConnectWLAN(mSelectWifiName.toStdString(), p_passwordLineEdit->text().toStdString()))
 		{
 			print_info("connect WLAN success");
-			wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
-			btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
+			p_wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
+			p_btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 			on_btnRefreshWIFI_clicked();
 		}
@@ -244,29 +244,29 @@ void MainWindow::createConnectWidget(QGroupBox* connectGroupB, bool isConnect)
 	verticalLayout->setSpacing(6);
 	verticalLayout->setContentsMargins(11, 11, 11, 11);
 	verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-	btnConnectControl = new QPushButton(connectGroupB);
-	btnConnectControl->setCheckable(true);
-	btnConnectControl->setChecked(false);
-	btnConnectControl->setFixedSize(QSize(93, 25));
-	connect(btnConnectControl, SIGNAL(clicked()), this, SLOT(slot_btnConnectControl_clicked()));
-	wifiState_Lab = new QLabel(connectGroupB);
-	wifiState_Lab->setFixedHeight(25);
-	wifiState_Lab->setAlignment(Qt::AlignLeft);
+	p_btnConnectControl = new QPushButton(connectGroupB);
+	p_btnConnectControl->setCheckable(true);
+	p_btnConnectControl->setChecked(false);
+	p_btnConnectControl->setFixedSize(QSize(93, 25));
+	connect(p_btnConnectControl, SIGNAL(clicked()), this, SLOT(slot_btnConnectControl_clicked()));
+	p_wifiState_Lab = new QLabel(connectGroupB);
+	p_wifiState_Lab->setFixedHeight(25);
+	p_wifiState_Lab->setAlignment(Qt::AlignLeft);
 	if (isConnect)
 	{
-		wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
-		btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
+		p_wifiState_Lab->setText(QString::fromLocal8Bit("已连接"));
+		p_btnConnectControl->setText(QString::fromLocal8Bit("断开连接"));
 	}
 	else
 	{
-		wifiState_Lab->setText(QString::fromLocal8Bit("安全"));
-		btnConnectControl->setText(QString::fromLocal8Bit("连接"));
+		p_wifiState_Lab->setText(QString::fromLocal8Bit("安全"));
+		p_btnConnectControl->setText(QString::fromLocal8Bit("连接"));
 	}
 	QHBoxLayout* horizontalLayout = new QHBoxLayout();
 	horizontalLayout->setSpacing(6);
 	horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-	horizontalLayout->addWidget(wifiState_Lab);
-	horizontalLayout->addWidget(btnConnectControl);
+	horizontalLayout->addWidget(p_wifiState_Lab);
+	horizontalLayout->addWidget(p_btnConnectControl);
 	verticalLayout->addLayout(horizontalLayout);
 }
 
@@ -292,9 +292,9 @@ void MainWindow::createPasswordWidget(QGroupBox* passwordGroupB)
 	label->setObjectName(QStringLiteral("label"));
 	label->setText(QString::fromLocal8Bit("请输入密码"));
 	horizontalLayout->addWidget(label);
-	passwordLineEdit = new QLineEditPassword(passwordGroupB);
-	passwordLineEdit->setObjectName(QStringLiteral("passwordLineEdit"));
-	passwordLineEdit->setStyleSheet(QString::fromUtf8("QLineEdit {\n"
+	p_passwordLineEdit = new QLineEditPassword(passwordGroupB);
+	p_passwordLineEdit->setObjectName(QStringLiteral("passwordLineEdit"));
+	p_passwordLineEdit->setStyleSheet(QString::fromUtf8("QLineEdit {\n"
 		"    font-family: \"Microsoft YaHei\";\n"
 		"    font-size: 12px;\n"
 		"    color: rgb(50, 50, 50);\n"
@@ -331,8 +331,8 @@ void MainWindow::createPasswordWidget(QGroupBox* passwordGroupB)
 		" \n"
 		" \n"
 		" "));
-	passwordLineEdit->setObjectName(QStringLiteral("passwordLineEdit"));
-	horizontalLayout->addWidget(passwordLineEdit);
+	p_passwordLineEdit->setObjectName(QStringLiteral("passwordLineEdit"));
+	horizontalLayout->addWidget(p_passwordLineEdit);
 	verticalLayout->addLayout(horizontalLayout);
 }
 

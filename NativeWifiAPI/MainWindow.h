@@ -41,7 +41,7 @@ private:
 	std::string						mCurrentConnectedWifi = "";
 	QString							mSelectWifiName = "";
 	QStringList						mWlan_slant_icon_files;
-	QPushButton*					btnConnectControl = NULL;
-	QLabel*							wifiState_Lab = NULL;
-	QLineEditPassword*				passwordLineEdit = NULL;
+	QPushButton*					p_btnConnectControl = NULL;
+	QLabel*							p_wifiState_Lab = NULL;
+	QLineEditPassword*				p_passwordLineEdit = NULL;
 };
